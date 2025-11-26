@@ -1,38 +1,32 @@
-import logging
-from logging import config
+import os
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
 
-from flask_restx import Namespace
+from src.application.domain.model.extraction_task import ExtractionTask
+from src.ui.controller import extractions_controller
+from src.di.di import Container
 
-from server import server
-# from src.background import BackgroundService
-from src.infrastructure.database.utils import db, ma
-from src.ui.controller import (
-    ExtractionController
-    )
-from src.utils.logger import create_default_logger_config
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = AsyncIOMotorClient(os.getenv("MONGODB_URI", "mongodb://mongo:27017/extraction"))
 
-api = server.api
-app = server.app
+    await init_beanie(database=client.ds_extraction, document_models=[ExtractionTask])
 
-# Logger config
-# config.dictConfig(create_default_logger_config("INFO"))
+    yield
 
-# Namespaces
-ns_extractions = Namespace("Extractions", description="Extractions management")
+    client.close()
 
-ns_extractions.add_resource(ExtractionController, "databases")
+app = FastAPI(
+    title="Extraction Service API",
+    lifespan=lifespan
+)
 
-api.add_namespace(ns_extractions, path="/")
+container = Container()
 
-# Instantiates the BackgroundService and its dependencies.
-# background_service = BackgroundService()
-# try:
-#     background_service.start_services()
-#     logging.info("Background services successfully initialized...")
-# except Exception as error:
-#     logging.error("{} {}".format(error.message, error.description), flush=True)
+container.wire(modules=[extractions_controller])
 
-if __name__ == "__main__":
-    db.init_app(app)
-    ma.init_app(app)
-    server.run()
+app.container = container
+
+app.include_router(extractions_controller.router)

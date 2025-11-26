@@ -1,7 +1,9 @@
 from decimal import Decimal, InvalidOperation
 import re
 
-class MoneyValidator:
+
+class AmountValidator:
+
     @staticmethod
     def validate(value: any) -> Decimal:
         if value is None:

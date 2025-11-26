@@ -1,7 +1,9 @@
 import re
 from datetime import datetime
 
+
 class DateValidator:
+
     @staticmethod
     def validate_and_format(value: any) -> str:
         if not value:

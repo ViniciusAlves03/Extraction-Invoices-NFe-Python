@@ -2,11 +2,13 @@ import pandas as pd
 import io
 from pydantic import ValidationError
 from src.application.port.extraction_service_interface import IExtractionService
+from src.application.port.extraction_repository_interface import IExtractionRepository
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
+
 
 class ExtractionService(IExtractionService):
 
-    def __init__(self, repository):
+    def __init__(self, repository: IExtractionRepository):
         self.repository = repository
 
     async def process_file(self, file_content: bytes, filename: str) -> ExtractionTask:
@@ -49,5 +51,5 @@ class ExtractionService(IExtractionService):
             file_type=extension,
             result_data=extracted_data
         )
-        await task.create()
-        return task
+        created_task = await self.repository.create(task)
+        return created_task

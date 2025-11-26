@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from src.application.domain.model.extraction_task import ExtractionTask
 
 
-class IExtractionService(ABC):
+class IExtractionRepository(ABC):
 
     @abstractmethod
-    async def process_file(self, file_content: bytes, filename: str) -> ExtractionTask:
+    async def create(self, task: ExtractionTask) -> ExtractionTask:
         pass

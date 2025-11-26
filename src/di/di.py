@@ -5,7 +5,6 @@ class Container(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(modules=["src.ui.controller.extractions_controller"])
 
-    # Aqui você registraria o Repository se não estivesse usando o Beanie direto
     # repository = providers.Factory(ExtractionRepository)
 
     extraction_service = providers.Factory(

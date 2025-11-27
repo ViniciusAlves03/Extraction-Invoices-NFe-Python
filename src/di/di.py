@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 from src.application.service.extraction_service import ExtractionService
 from src.application.service.extraction_service import ExtractionService
 from src.infrastructure.repository.extraction_repository import ExtractionRepository
+from src.infrastructure.adapter.gemini_extractor import GeminiExtractor
 
 
 class Container(containers.DeclarativeContainer):
@@ -10,7 +11,10 @@ class Container(containers.DeclarativeContainer):
 
     extraction_repository = providers.Factory(ExtractionRepository)
 
+    image_extractor = providers.Singleton(GeminiExtractor)
+
     extraction_service = providers.Factory(
         ExtractionService,
-        repository=extraction_repository
+        repository=extraction_repository,
+        image_extractor=image_extractor
     )

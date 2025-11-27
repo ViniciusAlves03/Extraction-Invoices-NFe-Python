@@ -1,15 +1,20 @@
-import pandas as pd
 import io
+import logging
+import pandas as pd
+
 from pydantic import ValidationError
 from src.application.port.extraction_service_interface import IExtractionService
 from src.application.port.extraction_repository_interface import IExtractionRepository
+from src.application.port.image_extractor_interface import IImageExtractor
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
 
+logger = logging.getLogger(__name__)
 
 class ExtractionService(IExtractionService):
 
-    def __init__(self, repository: IExtractionRepository):
+    def __init__(self, repository: IExtractionRepository, image_extractor: IImageExtractor):
         self.repository = repository
+        self.image_extractor = image_extractor
 
     async def process_file(self, file_content: bytes, filename: str) -> ExtractionTask:
         extension = filename.split('.')[-1].lower()
@@ -44,6 +49,9 @@ class ExtractionService(IExtractionService):
                 except Exception as e:
                     print(f"Erro genérico na linha: {e}")
                     continue
+
+        elif extension in ['png', 'jpg', 'jpeg']:
+            extracted_data = self.image_extractor.extract_products_from_nfe(file_content)
 
         task = ExtractionTask(
             filename=filename,

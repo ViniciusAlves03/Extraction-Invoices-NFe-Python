@@ -22,25 +22,25 @@ class GeminiExtractor(IImageExtractor):
             image = Image.open(io.BytesIO(file_content))
 
             prompt = """
-            Você é um assistente especializado em contabilidade e extração de dados de Notas Fiscais Brasileiras (DANFE/NFe).
-            Analise a imagem fornecida e extraia os ITENS (produtos/serviços) desta nota fiscal.
+                Você é um assistente especializado em contabilidade e extração de dados de Notas Fiscais Brasileiras (DANFE/NFe).
+                Analise a imagem fornecida e extraia os ITENS (produtos/serviços) desta nota fiscal.
 
-            Retorne APENAS um JSON (sem markdown, sem ```json) com uma lista de objetos seguindo estritamente esta estrutura:
-            [
-                {
-                    "title": "Descrição exata do produto (remova códigos iniciais como 'DH89' se houver)",
-                    "description": "Linha completa original do item",
-                    "quantity": 1.00 (número decimal),
-                    "unit_price": 10.00 (número decimal),
-                    "total_amount": 10.00 (número decimal),
-                    "date": "YYYY-MM-DD" (Data de emissão da nota, se houver)
-                }
-            ]
+                Retorne APENAS um JSON (sem markdown, sem ```json) com uma lista de objetos seguindo estritamente esta estrutura:
+                [
+                    {
+                        "title": "Descrição exata do produto (remova códigos iniciais como 'DH89' se houver)",
+                        "description": "Linha completa original do item",
+                        "quantity": 1.00 (número decimal),
+                        "unit_price": 10.00 (número decimal),
+                        "total_amount": 10.00 (número decimal),
+                        "date": "YYYY-MM-DD" (Data de emissão da nota, se houver)
+                    }
+                ]
 
-            Regras:
-            1. Ignore linhas de 'Faturas', 'Transportadora' ou 'Impostos'. Foque apenas na tabela de 'DADOS DOS PRODUTOS/SERVIÇOS' ou semelhante.
-            2. Se a quantidade não estiver explícita, tente deduzir matematicamente (Total / Unitário).
-            3. Converta valores numéricos para formato americano (ponto decimal).
+                Regras:
+                1. Ignore linhas de 'Faturas', 'Transportadora' ou 'Impostos'. Foque apenas na tabela de 'DADOS DOS PRODUTOS/SERVIÇOS' ou semelhante.
+                2. Se a quantidade não estiver explícita, tente deduzir matematicamente (Total / Unitário).
+                3. Converta valores numéricos para formato americano (ponto decimal).
             """
 
             response = self.model.generate_content([prompt, image])

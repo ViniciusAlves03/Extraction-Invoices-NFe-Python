@@ -12,9 +12,11 @@ class Container(containers.DeclarativeContainer):
     extraction_repository = providers.Factory(ExtractionRepository)
 
     image_extractor = providers.Singleton(GeminiExtractor)
+    excel_extractor = providers.Singleton(GeminiExtractor)
 
     extraction_service = providers.Factory(
         ExtractionService,
         repository=extraction_repository,
-        image_extractor=image_extractor
+        image_extractor=image_extractor,
+        excel_extractor=excel_extractor
     )

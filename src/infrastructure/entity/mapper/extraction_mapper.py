@@ -1,6 +1,5 @@
-from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
-from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema, ExtractedExpenseSchema
-
+from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense, ExtractionError
+from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema, ExtractedExpenseSchema, ExtractionErrorSchema
 
 class ExtractionMapper:
 
@@ -17,10 +16,18 @@ class ExtractionMapper:
                 ExtractedExpense(
                     title=item.title,
                     description=item.description,
-                    amount=item.amount,
+                    quantity=item.quantity,
+                    unit_price=item.unit_price,
+                    total_amount=item.total_amount,
                     date=item.date,
                     categoryId=item.categoryId
                 ) for item in schema.result_data
+            ],
+            error_report=[
+                ExtractionError(
+                    item_identifier=err.item_identifier,
+                    error_message=err.error_message
+                ) for err in schema.error_report
             ]
         )
 
@@ -36,9 +43,17 @@ class ExtractionMapper:
                 ExtractedExpenseSchema(
                     title=item.title,
                     description=item.description,
-                    amount=item.amount,
+                    quantity=item.quantity,
+                    unit_price=item.unit_price,
+                    total_amount=item.total_amount,
                     date=item.date,
                     categoryId=item.categoryId
                 ) for item in domain.result_data
+            ],
+            error_report=[
+                ExtractionErrorSchema(
+                    item_identifier=err.item_identifier,
+                    error_message=err.error_message
+                ) for err in domain.error_report
             ]
         )

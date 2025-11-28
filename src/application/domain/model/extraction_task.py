@@ -6,10 +6,16 @@ from src.application.domain.validator.date_validator import DateValidator
 from src.application.domain.validator.amount_validator import AmountValidator
 
 
+class ExtractionError(BaseModel):
+    item_identifier: str
+    error_message: str
+
 class ExtractedExpense(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=255)
-    amount: Decimal = Field(...)
+    quantity: Decimal = Field(...)
+    unit_price: Decimal = Field(...)
+    total_amount: Decimal = Field(...)
     date: Optional[str] = None
     categoryId: Optional[str] = None
 
@@ -18,7 +24,7 @@ class ExtractedExpense(BaseModel):
     def clean_strings(cls, v):
         return str(v).strip() if v else None
 
-    @field_validator('amount', mode='before')
+    @field_validator('unit_price', 'total_amount', mode='before')
     @classmethod
     def parse_amount(cls, v):
         return AmountValidator.validate(v)
@@ -31,8 +37,9 @@ class ExtractedExpense(BaseModel):
 class ExtractionTask(BaseModel):
     id: Optional[str] = None
     filename: str
-    status: str
+    status: str # COMPLETED, PARTIAL_SUCCESS, FAILED
     file_type: str
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
     result_data: List[ExtractedExpense] = []
+    error_report: List[ExtractionError] = []

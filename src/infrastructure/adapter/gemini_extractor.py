@@ -4,9 +4,10 @@ import logging
 from decimal import Decimal
 from PIL import Image
 import google.generativeai as genai
+from pydantic import ValidationError
 
 from src.application.port.image_extractor_interface import IImageExtractor
-from src.application.domain.model.extraction_task import ExtractedExpense
+from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
 from src.utils.config import settings
 
 logger = logging.getLogger(__name__)
@@ -44,30 +45,37 @@ class GeminiExtractor(IImageExtractor):
             """
 
             response = self.model.generate_content([prompt, image])
+            text = response.text.strip()
 
-            response_text = response.text.strip()
+            if text.startswith("```"):
+                text = text.replace("```json", "").replace("```", "")
 
-            if response_text.startswith("```"):
-                response_text = response_text.replace("```json", "").replace("```", "")
+            data = json.loads(text)
 
-            data = json.loads(response_text)
+            valid_items = []
+            errors = []
 
-            results = []
             for item in data:
+                item_desc = item.get('title', 'Unnamed item')
                 try:
                     expense = ExtractedExpense(
                         title=item.get('title'),
                         description=item.get('description'),
-                        amount=Decimal(str(item.get('total_amount', 0))),
+                        quantity=Decimal(str(item.get('quantity'))),
+                        unit_price=Decimal(str(item.get('unit_price'))),
+                        total_amount=Decimal(str(item.get('total_amount'))),
                         date=item.get('date')
                     )
-                    results.append(expense)
-                except Exception as e:
-                    logger.error(f"Erro converter item IA: {e}")
-                    continue
+                    valid_items.append(expense)
+                except (ValidationError, ValueError) as e:
+                    msg = str(e).split('[')[0]
+                    errors.append(ExtractionError(
+                        item_identifier=f"Item IA: {item_desc}",
+                        error_message=f"Invalid data: {msg}"
+                    ))
 
-            return results
+            return valid_items, errors
 
         except Exception as e:
-            logger.error(f"Erro fatal no GeminiExtractor: {e}")
-            return []
+            logger.error(f"Gemini fatal error: {e}")
+            return [], [ExtractionError(item_identifier="Processamento IA", error_message=str(e))]

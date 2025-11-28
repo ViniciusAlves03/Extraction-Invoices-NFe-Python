@@ -3,6 +3,7 @@ from src.application.service.extraction_service import ExtractionService
 from src.application.service.extraction_service import ExtractionService
 from src.infrastructure.repository.extraction_repository import ExtractionRepository
 from src.infrastructure.adapter.gemini_extractor import GeminiExtractor
+from src.infrastructure.adapter.excel_extractor import ExcelExtractor
 
 
 class Container(containers.DeclarativeContainer):
@@ -12,7 +13,7 @@ class Container(containers.DeclarativeContainer):
     extraction_repository = providers.Factory(ExtractionRepository)
 
     image_extractor = providers.Singleton(GeminiExtractor)
-    excel_extractor = providers.Singleton(GeminiExtractor)
+    excel_extractor = providers.Singleton(ExcelExtractor)
 
     extraction_service = providers.Factory(
         ExtractionService,

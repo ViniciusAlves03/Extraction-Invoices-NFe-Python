@@ -1,5 +1,4 @@
 import logging
-
 from src.application.port.extraction_service_interface import IExtractionService
 from src.application.port.extraction_repository_interface import IExtractionRepository
 from src.application.port.image_extractor_interface import IImageExtractor
@@ -10,12 +9,7 @@ logger = logging.getLogger(__name__)
 
 class ExtractionService(IExtractionService):
 
-    def __init__(
-        self,
-        repository: IExtractionRepository,
-        image_extractor: IImageExtractor,
-        excel_extractor: IExcelExtractor
-    ):
+    def __init__(self, repository: IExtractionRepository, image_extractor: IImageExtractor, excel_extractor: IExcelExtractor):
         self.repository = repository
         self.image_extractor = image_extractor
         self.excel_extractor = excel_extractor
@@ -24,18 +18,29 @@ class ExtractionService(IExtractionService):
         extension = filename.split('.')[-1].lower()
 
         extracted_data = []
+        errors = []
 
         if extension in ['xlsx', 'xls']:
-            extracted_data = self.excel_extractor.extract_products_from_excel(file_content)
+            extracted_data, errors = self.excel_extractor.extract_products_from_excel(file_content)
 
         elif extension in ['png', 'jpg', 'jpeg']:
-            extracted_data = self.image_extractor.extract_products_from_nfe(file_content)
+            extracted_data, errors = self.image_extractor.extract_products_from_nfe(file_content)
+
+        else:
+            errors.append({"item_identifier": "Archive", "error_message": f"The {extension} format is not supported."})
+
+        status = "COMPLETED"
+        if errors and extracted_data:
+            status = "PARTIAL_SUCCESS"
+        elif errors and not extracted_data:
+            status = "FAILED"
 
         task = ExtractionTask(
             filename=filename,
-            status="COMPLETED",
+            status=status,
             file_type=extension,
-            result_data=extracted_data
+            result_data=extracted_data,
+            error_report=errors
         )
-        created_task = await self.repository.create(task)
-        return created_task
+
+        return await self.repository.create(task)

@@ -37,8 +37,9 @@ class ExtractedExpense(BaseModel):
 class ExtractionTask(BaseModel):
     id: Optional[str] = None
     filename: str
-    status: str # COMPLETED, PARTIAL_SUCCESS, FAILED
     file_type: str
+    file_hash: Optional[str] = None
+    status: str # COMPLETED, PARTIAL_SUCCESS, FAILED
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
     result_data: List[ExtractedExpense] = []

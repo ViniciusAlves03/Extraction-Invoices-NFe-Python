@@ -4,6 +4,7 @@ from src.application.port.extraction_repository_interface import IExtractionRepo
 from src.application.port.image_extractor_interface import IImageExtractor
 from src.application.port.excel_extractor_interface import IExcelExtractor
 from src.application.domain.model.extraction_task import ExtractionTask
+from src.utils.hashing import calculate_sha256
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,13 @@ class ExtractionService(IExtractionService):
         self.excel_extractor = excel_extractor
 
     async def process_file(self, file_content: bytes, filename: str) -> ExtractionTask:
+        file_hash = calculate_sha256(file_content)
+
+        existing_task = await self.repository.find_by_hash(file_hash)
+        if existing_task:
+            logger.info(f"Arquivo duplicado detectado (Hash: {file_hash}). Retornando existente.")
+            return existing_task
+
         extension = filename.split('.')[-1].lower()
 
         extracted_data = []

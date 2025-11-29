@@ -20,8 +20,9 @@ class ExtractedExpenseSchema(BaseModel):
 
 class ExtractionTaskSchema(Document):
     filename: str
-    status: str
     file_type: str
+    file_hash: str
+    status: str
     created_at: datetime
     updated_at: datetime
     result_data: List[ExtractedExpenseSchema] = []

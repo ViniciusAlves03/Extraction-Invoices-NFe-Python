@@ -23,7 +23,8 @@ class ExcelExtractor(IExcelExtractor):
                 'data': 'date', 'emissão': 'date',
                 'qtd': 'quantity', 'quantidade': 'quantity', 'quant': 'quantity',
                 'unitário': 'unit_price', 'unitario': 'unit_price', 'valor unit': 'unit_price', 'v.un': 'unit_price',
-                'total': 'total_amount', 'valor total': 'total_amount'
+                'total': 'total_amount', 'valor total': 'total_amount',
+                'chave': 'access_key', 'chave de acesso': 'access_key', 'chave nfe': 'access_key', 'key': 'access_key'
             }
             df.rename(columns=col_map, inplace=True)
 
@@ -39,7 +40,8 @@ class ExcelExtractor(IExcelExtractor):
                         quantity=row.get('quantity', 1),
                         unit_price=row.get('unit_price', row.get('total_amount')),
                         total_amount=row.get('total_amount'),
-                        date=row.get('date')
+                        date=row.get('date'),
+                        access_key=row.get('access_key')
                     )
                     extracted_data.append(expense)
 

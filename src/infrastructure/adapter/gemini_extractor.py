@@ -24,24 +24,30 @@ class GeminiExtractor(IImageExtractor):
 
             prompt = """
                 Você é um assistente especializado em contabilidade e extração de dados de Notas Fiscais Brasileiras (DANFE/NFe).
-                Analise a imagem fornecida e extraia os ITENS (produtos/serviços) desta nota fiscal.
 
-                Retorne APENAS um JSON (sem markdown, sem ```json) com uma lista de objetos seguindo estritamente esta estrutura:
+                1. Localize a CHAVE DE ACESSO da nota fiscal (código numérico de 44 dígitos, geralmente no topo direito, abaixo do código de barras).
+                2. Extraia os ITENS (produtos/serviços).
+
+                Retorne APENAS um JSON com uma lista de objetos.
+                IMPORTANTE: A chave de acesso encontrada deve ser repetida no campo 'access_key' de TODOS os itens.
+
+                Estrutura do JSON:
                 [
                     {
-                        "title": "Descrição exata do produto (remova códigos iniciais como 'DH89' se houver)",
-                        "description": "Linha completa original do item",
-                        "quantity": 1.00 (número decimal),
-                        "unit_price": 10.00 (número decimal),
-                        "total_amount": 10.00 (número decimal),
-                        "date": "YYYY-MM-DD" (Data de emissão da nota, se houver)
+                        "title": "Descrição exata do produto",
+                        "description": "Linha completa",
+                        "quantity": 1.00,
+                        "unit_price": 10.00,
+                        "total_amount": 10.00,
+                        "date": "YYYY-MM-DD",
+                        "access_key": "352309..." (A chave de 44 dígitos da nota)
                     }
                 ]
 
                 Regras:
-                1. Ignore linhas de 'Faturas', 'Transportadora' ou 'Impostos'. Foque apenas na tabela de 'DADOS DOS PRODUTOS/SERVIÇOS' ou semelhante.
-                2. Se a quantidade não estiver explícita, tente deduzir matematicamente (Total / Unitário).
-                3. Converta valores numéricos para formato americano (ponto decimal).
+                1. Ignore linhas de Faturas/Impostos.
+                2. Use ponto para decimais.
+                3. Se a chave de acesso não estiver legível, deixe null.
             """
 
             response = self.model.generate_content([prompt, image])
@@ -64,7 +70,8 @@ class GeminiExtractor(IImageExtractor):
                         quantity=Decimal(str(item.get('quantity'))),
                         unit_price=Decimal(str(item.get('unit_price'))),
                         total_amount=Decimal(str(item.get('total_amount'))),
-                        date=item.get('date')
+                        date=item.get('date'),
+                        access_key=item.get('access_key')
                     )
                     valid_items.append(expense)
                 except (ValidationError, ValueError) as e:

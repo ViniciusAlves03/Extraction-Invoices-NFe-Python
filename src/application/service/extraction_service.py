@@ -37,6 +37,27 @@ class ExtractionService(IExtractionService):
         else:
             errors.append({"item_identifier": "Archive", "error_message": f"The {extension} format is not supported."})
 
+        if extracted_data:
+            checked_keys_cache = {}
+
+            for item in extracted_data:
+                if item.access_key and item.total_amount:
+                    cache_key = f"{item.access_key}|{item.total_amount}"
+
+                    if cache_key in checked_keys_cache:
+                        result = checked_keys_cache[cache_key]
+                    else:
+                        result = await self.repository.find_duplicate_by_key(item.access_key, item.total_amount)
+                        checked_keys_cache[cache_key] = result
+
+                    if result:
+                        original_task_id = result
+
+                        item.is_duplicate = True
+                        item.duplicate_of_id = original_task_id
+
+                        logger.warning(f"Duplicata encontrada! Chave: {item.access_key} | Valor: {item.total_amount}")
+
         status = "COMPLETED"
         if errors and extracted_data:
             status = "PARTIAL_SUCCESS"

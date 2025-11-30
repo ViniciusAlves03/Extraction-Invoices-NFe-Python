@@ -20,7 +20,10 @@ class ExtractionMapper:
                     unit_price=item.unit_price,
                     total_amount=item.total_amount,
                     date=item.date,
-                    categoryId=item.categoryId
+                    categoryId=item.categoryId,
+                    access_key=item.access_key,
+                    is_duplicate=item.is_duplicate,
+                    duplicate_of_id=item.duplicate_of_id
                 ) for item in schema.result_data
             ],
             error_report=[
@@ -35,8 +38,9 @@ class ExtractionMapper:
     def to_schema(domain: ExtractionTask) -> ExtractionTaskSchema:
         return ExtractionTaskSchema(
             filename=domain.filename,
-            status=domain.status,
             file_type=domain.file_type,
+            file_hash=domain.file_hash,
+            status=domain.status,
             created_at=domain.created_at,
             updated_at=domain.updated_at,
             result_data=[
@@ -47,7 +51,10 @@ class ExtractionMapper:
                     unit_price=item.unit_price,
                     total_amount=item.total_amount,
                     date=item.date,
-                    categoryId=item.categoryId
+                    categoryId=item.categoryId,
+                    access_key=item.access_key,
+                    is_duplicate=item.is_duplicate,
+                    duplicate_of_id=item.duplicate_of_id
                 ) for item in domain.result_data
             ],
             error_report=[

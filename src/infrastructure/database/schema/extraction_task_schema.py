@@ -17,6 +17,9 @@ class ExtractedExpenseSchema(BaseModel):
     total_amount: Decimal
     date: Optional[str] = None
     categoryId: Optional[str] = None
+    access_key: Optional[str] = None
+    is_duplicate: bool = False
+    duplicate_of_id: Optional[str] = None
 
 class ExtractionTaskSchema(Document):
     filename: str

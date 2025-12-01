@@ -32,5 +32,10 @@ class Strings:
             "EXCEL_ERROR": "Excel processing error: {0}",
             "GEMINI_ERROR": "Gemini AI processing error: {0}",
             "GEMINI_INVALID_DATA": "Invalid data returned by AI: {0}"
+        },
+
+        "TASK": {
+            "NOT_FOUND": "Record not found!",
+            "NOT_FOUND_DESC": "Record with ID {0} not found."
         }
     }

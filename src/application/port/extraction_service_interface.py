@@ -7,3 +7,7 @@ class IExtractionService(ABC):
     @abstractmethod
     async def process_file(self, file_content: bytes, filename: str) -> ExtractionTask:
         pass
+
+    @abstractmethod
+    async def get_task_by_id(self, task_id: str) -> ExtractionTask:
+        pass

@@ -1,4 +1,5 @@
 from decimal import Decimal
+from beanie import PydanticObjectId
 from src.application.port.extraction_repository_interface import IExtractionRepository
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
 from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema
@@ -11,6 +12,17 @@ class ExtractionRepository(IExtractionRepository):
         schema = ExtractionMapper.to_schema(task)
         await schema.create()
         return ExtractionMapper.to_domain(schema)
+
+    async def find_by_id(self, id: str) -> ExtractionTask | None:
+        try:
+            oid = PydanticObjectId(id)
+        except:
+            return None
+
+        schema = await ExtractionTaskSchema.get(oid)
+        if schema:
+            return ExtractionMapper.to_domain(schema)
+        return None
 
     async def find_by_hash(self, file_hash: str) -> ExtractionTask | None:
         schema = await ExtractionTaskSchema.find_one(

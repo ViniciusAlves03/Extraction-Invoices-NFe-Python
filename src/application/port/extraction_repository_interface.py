@@ -10,6 +10,10 @@ class IExtractionRepository(ABC):
         pass
 
     @abstractmethod
+    async def find_by_id(self, id: str) -> ExtractionTask | None:
+        pass
+
+    @abstractmethod
     async def find_by_hash(self, file_hash: str) -> ExtractionTask | None:
         pass
 

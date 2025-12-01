@@ -87,3 +87,12 @@ class ExtractionService(IExtractionService):
                 error_report=[{"item_identifier": "System", "error_message": str(e)}]
             )
             return await self.repository.create(error_task)
+
+    async def get_task_by_id(self, task_id: str) -> ExtractionTask:
+        task = await self.repository.find_by_id(task_id)
+        if not task:
+            raise NotFoundException(
+                message=Strings.ERROR_MESSAGE['TASK']['NOT_FOUND'],
+                description=Strings.ERROR_MESSAGE['TASK']['NOT_FOUND_DESC']
+            )
+        return task

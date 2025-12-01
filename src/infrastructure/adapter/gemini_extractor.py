@@ -19,7 +19,7 @@ class GeminiExtractor(IImageExtractor):
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash')
 
-    def extract_products_from_nfe(self, file_content: bytes) -> list[ExtractedExpense]:
+    def extract_products_from_nfe(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
         try:
             image = Image.open(io.BytesIO(file_content))
 
@@ -68,7 +68,7 @@ class GeminiExtractor(IImageExtractor):
                     expense = ExtractedExpense(
                         title=item.get('title'),
                         description=item.get('description'),
-                        quantity=Decimal(str(item.get('quantity'))),
+                        quantity=Decimal(str(item.get('quantity', 1))),
                         unit_price=Decimal(str(item.get('unit_price'))),
                         total_amount=Decimal(str(item.get('total_amount'))),
                         date=item.get('date'),

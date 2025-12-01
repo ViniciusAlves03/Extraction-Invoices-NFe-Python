@@ -4,6 +4,9 @@ from src.ui.controller import extractions_controller
 from src.di.di import Container
 from src.infrastructure.database.mongo_connection import MongoConnection
 from src.utils.config import Settings
+from src.application.domain.exception import DomainException
+from src.utils.strings import Strings
+from src.ui.exception.exception_handler import global_exception_handler
 
 
 def create_app(settings: Settings) -> FastAPI:
@@ -17,9 +20,11 @@ def create_app(settings: Settings) -> FastAPI:
         await MongoConnection.disconnect()
 
     app = FastAPI(
-        title="Extraction Service API",
-        lifespan=lifespan
-    )
+        title=Strings.APP['TITLE'],
+        lifespan=lifespan)
+
+    app.add_exception_handler(DomainException, global_exception_handler)
+    app.add_exception_handler(Exception, global_exception_handler)
 
     container = Container()
 

@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from src.application.port.excel_extractor_interface import IExcelExtractor
 from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
+from src.utils.strings import Strings
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class ExcelExtractor(IExcelExtractor):
                 row_idx = index + 2
                 try:
                     if pd.isna(row.get('title')) or pd.isna(row.get('total_amount')):
-                         raise ValueError("Required fields (Title or Total) are empty.")
+                         raise ValueError(Strings.ERROR_MESSAGE['VALIDATE']['REQUIRED_EXCEL_FIELDS'])
 
                     expense = ExtractedExpense(
                         title=row.get('title'),
@@ -55,11 +56,14 @@ class ExcelExtractor(IExcelExtractor):
                 except Exception as e:
                     errors.append(ExtractionError(
                         item_identifier=f"Excel Row {row_idx}",
-                        error_message=f"Unexpected error: {str(e)}"
+                        error_message=Strings.ERROR_MESSAGE['UNEXPECTED'] + f" {str(e)}"
                     ))
 
             return extracted_data, errors
 
         except Exception as e:
             logger.error(f"Excel fatal error: {e}")
-            return [], [ExtractionError(item_identifier="General Archive", error_message=str(e))]
+            return [], [ExtractionError(
+                item_identifier="General Archive",
+                error_message=Strings.ERROR_MESSAGE['EXTRACTOR']['EXCEL_ERROR'].format(str(e))
+            )]

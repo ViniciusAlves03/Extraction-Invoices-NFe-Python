@@ -1,8 +1,8 @@
-import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    APP_ID: str = 'extraction.app'
     PORT: int = 3000
     MONGODB_URI: str = "mongodb://mongo:27017/extraction"
     GEMINI_API_KEY: str = "<api key>"

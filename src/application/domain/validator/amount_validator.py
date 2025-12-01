@@ -1,6 +1,6 @@
 from decimal import Decimal, InvalidOperation
 import re
-
+from src.utils.strings import Strings
 
 class AmountValidator:
 
@@ -31,4 +31,4 @@ class AmountValidator:
 
             return Decimal(val_str)
         except InvalidOperation:
-            raise ValueError(f"Valor monetário inválido: {value}")
+            raise ValueError(Strings.ERROR_MESSAGE['VALIDATE']['INVALID_MONEY_FORMAT'].format(value))

@@ -1,5 +1,5 @@
-import re
 from datetime import datetime
+from src.utils.strings import Strings
 
 
 class DateValidator:
@@ -26,9 +26,12 @@ class DateValidator:
             try:
                 dt = datetime.strptime(date_str, fmt)
                 if dt.year < 1678 or dt.year > 2261:
-                    raise ValueError(f"Ano fora do limite permitido: {dt.year}")
+                    msg = Strings.ERROR_MESSAGE['DATE']['YEAR_NOT_ALLOWED'].format(dt.year)
+                    raise ValueError(msg)
                 return dt.strftime('%Y-%m-%d')
-            except ValueError:
+            except ValueError as e:
+                if "year not allowed" in str(e):
+                    raise e
                 continue
 
-        raise ValueError(f"Formato de data desconhecido ou inválido: {value}")
+        raise ValueError(Strings.ERROR_MESSAGE['DATE']['INVALID_DATE_FORMAT'].format(value))

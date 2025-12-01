@@ -4,11 +4,14 @@ from src.application.service.extraction_service import ExtractionService
 from src.infrastructure.repository.extraction_repository import ExtractionRepository
 from src.infrastructure.adapter.gemini_extractor import GeminiExtractor
 from src.infrastructure.adapter.excel_extractor import ExcelExtractor
+from src.utils.custom_logger import CustomLogger
 
 
 class Container(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(modules=["src.ui.controller.extractions_controller"])
+
+    logger = providers.Singleton(CustomLogger)
 
     extraction_repository = providers.Factory(ExtractionRepository)
 
@@ -19,5 +22,6 @@ class Container(containers.DeclarativeContainer):
         ExtractionService,
         repository=extraction_repository,
         image_extractor=image_extractor,
-        excel_extractor=excel_extractor
+        excel_extractor=excel_extractor,
+        logger=logger
     )

@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from src.application.port.image_extractor_interface import IImageExtractor
 from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
 from src.utils.config import settings
+from src.utils.strings import Strings
 
 logger = logging.getLogger(__name__)
 
@@ -78,11 +79,13 @@ class GeminiExtractor(IImageExtractor):
                     msg = str(e).split('[')[0]
                     errors.append(ExtractionError(
                         item_identifier=f"Item IA: {item_desc}",
-                        error_message=f"Invalid data: {msg}"
+                        error_message=Strings.ERROR_MESSAGE['EXTRACTOR']['GEMINI_INVALID_DATA'].format(msg)
                     ))
 
             return valid_items, errors
 
         except Exception as e:
-            logger.error(f"Gemini fatal error: {e}")
-            return [], [ExtractionError(item_identifier="Processamento IA", error_message=str(e))]
+            return [], [ExtractionError(
+                item_identifier="AI Processing",
+                error_message=Strings.ERROR_MESSAGE['EXTRACTOR']['GEMINI_ERROR'].format(str(e))
+            )]

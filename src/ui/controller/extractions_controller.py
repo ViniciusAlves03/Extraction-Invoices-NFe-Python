@@ -1,5 +1,7 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Query
+from typing import List, Optional
 from src.application.domain.model.extraction_task import ExtractionTask
+from src.application.domain.model.task_filter import TaskFilter
 from src.application.port.extraction_service_interface import IExtractionService
 from src.di.di import Container
 from dependency_injector.wiring import inject, Provide
@@ -18,6 +20,14 @@ async def upload_file(
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/", response_model=List[ExtractionTask])
+@inject
+async def get_extractions(
+    filters: TaskFilter = Depends(),
+    service: IExtractionService = Depends(Provide[Container.extraction_service])
+):
+    return await service.get_all_tasks(filters)
 
 @router.get("/{task_id}", response_model=ExtractionTask)
 @inject

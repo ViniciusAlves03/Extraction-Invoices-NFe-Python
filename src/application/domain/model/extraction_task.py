@@ -5,11 +5,8 @@ import re
 from pydantic import BaseModel, Field, field_validator
 from src.application.domain.validator.date_validator import DateValidator
 from src.application.domain.validator.amount_validator import AmountValidator
+from src.application.domain.utils.status_types import Status
 
-
-class ExtractionError(BaseModel):
-    item_identifier: str
-    error_message: str
 
 class ExtractedExpense(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
@@ -44,13 +41,20 @@ class ExtractedExpense(BaseModel):
         if not v: return None
         return re.sub(r'\D', '', str(v))
 
+class ExtractionError(BaseModel):
+    item_identifier: str
+    error_message: str
+
 class ExtractionTask(BaseModel):
     id: Optional[str] = None
     filename: str
     file_type: str
     file_hash: Optional[str] = None
-    status: str # COMPLETED, PARTIAL_SUCCESS, FAILED
+    status: Status = Status.PENDING
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     result_data: List[ExtractedExpense] = []
     error_report: List[ExtractionError] = []
+
+    class Config:
+        use_enum_values = True

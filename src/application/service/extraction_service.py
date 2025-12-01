@@ -4,6 +4,7 @@ from src.application.port.image_extractor_interface import IImageExtractor
 from src.application.port.excel_extractor_interface import IExcelExtractor
 from src.application.port.logger_interface import ILogger
 from src.application.domain.model.extraction_task import ExtractionTask
+from src.application.domain.model.task_filter import TaskFilter
 from src.application.domain.exception import (ValidationException, NotFoundException)
 from src.application.domain.utils.status_types import Status
 from src.utils.hashing import calculate_sha256
@@ -87,6 +88,9 @@ class ExtractionService(IExtractionService):
                 error_report=[{"item_identifier": "System", "error_message": str(e)}]
             )
             return await self.repository.create(error_task)
+
+    async def get_all_tasks(self, filters: TaskFilter) -> list[ExtractionTask]:
+        return await self.repository.find_all(filters)
 
     async def get_task_by_id(self, task_id: str) -> ExtractionTask:
         task = await self.repository.find_by_id(task_id)

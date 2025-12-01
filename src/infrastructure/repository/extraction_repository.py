@@ -2,6 +2,7 @@ from decimal import Decimal
 from beanie import PydanticObjectId
 from src.application.port.extraction_repository_interface import IExtractionRepository
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
+from src.application.domain.model.task_filter import TaskFilter
 from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema
 from src.infrastructure.entity.mapper.extraction_mapper import ExtractionMapper
 
@@ -12,6 +13,27 @@ class ExtractionRepository(IExtractionRepository):
         schema = ExtractionMapper.to_schema(task)
         await schema.create()
         return ExtractionMapper.to_domain(schema)
+
+    async def find_all(self, filters: TaskFilter) -> list[ExtractionTask]:
+        query = {}
+
+        if filters.status:
+            query["status"] = filters.status
+
+        if filters.title:
+            query["result_data.title"] = {"$regex": filters.title, "$options": "i"}
+
+        if filters.date:
+            query["result_data.date"] = filters.date
+
+        if filters.category_id:
+            query["result_data.categoryId"] = filters.category_id
+
+        if filters.is_duplicate is not None:
+            query["result_data.is_duplicate"] = filters.is_duplicate
+
+        schemas = await ExtractionTaskSchema.find(query).to_list()
+        return [ExtractionMapper.to_domain(s) for s in schemas]
 
     async def find_by_id(self, id: str) -> ExtractionTask | None:
         try:

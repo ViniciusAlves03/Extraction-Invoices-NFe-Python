@@ -1,9 +1,17 @@
-from typing import List, Optional
+from typing import List, Optional, Annotated
 from datetime import datetime
 from beanie import Document
-from pydantic import BaseModel
+from pydantic import BaseModel, BeforeValidator
 from decimal import Decimal
+from bson import Decimal128
 
+
+def convert_decimal_128(v):
+    if isinstance(v, Decimal128):
+        return v.to_decimal()
+    return v
+
+PyDecimal = Annotated[Decimal, BeforeValidator(convert_decimal_128)]
 
 class ExtractionErrorSchema(BaseModel):
     item_identifier: str
@@ -12,9 +20,9 @@ class ExtractionErrorSchema(BaseModel):
 class ExtractedExpenseSchema(BaseModel):
     title: str
     description: Optional[str] = None
-    quantity: Decimal
-    unit_price: Decimal
-    total_amount: Decimal
+    quantity: PyDecimal
+    unit_price: PyDecimal
+    total_amount: PyDecimal
     date: Optional[str] = None
     categoryId: Optional[str] = None
     access_key: Optional[str] = None

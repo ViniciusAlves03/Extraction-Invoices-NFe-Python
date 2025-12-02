@@ -1,5 +1,6 @@
 from decimal import Decimal
 from beanie import PydanticObjectId
+from beanie.operators import RegEx, In
 from src.application.port.extraction_repository_interface import IExtractionRepository
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
 from src.application.domain.model.task_filter import TaskFilter
@@ -49,8 +50,8 @@ class ExtractionRepository(IExtractionRepository):
     async def find_by_hash(self, file_hash: str) -> ExtractionTask | None:
         schema = await ExtractionTaskSchema.find_one(
             ExtractionTaskSchema.file_hash == file_hash,
-            ExtractionTaskSchema.status == "COMPLETED"
-        )
+            In(ExtractionTaskSchema.status, ["COMPLETED", "PENDING", "PARTIAL_SUCCESS"])
+        ).project(ExtractionTaskSchema)
         if schema:
             return ExtractionMapper.to_domain(schema)
         return None

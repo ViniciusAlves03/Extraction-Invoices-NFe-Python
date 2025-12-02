@@ -1,7 +1,7 @@
+import re
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
-import re
 from pydantic import BaseModel, Field, field_validator
 from src.application.domain.validator.date_validator import DateValidator
 from src.application.domain.validator.amount_validator import AmountValidator
@@ -25,7 +25,7 @@ class ExtractedExpense(BaseModel):
     def clean_strings(cls, v):
         return str(v).strip() if v else None
 
-    @field_validator('unit_price', 'total_amount', mode='before')
+    @field_validator('quantity', 'unit_price', 'total_amount', mode='before')
     @classmethod
     def parse_amount(cls, v):
         return AmountValidator.validate(v)

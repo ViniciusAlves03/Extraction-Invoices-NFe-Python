@@ -14,12 +14,9 @@ async def upload_file(
     file: UploadFile = File(...),
     service: IExtractionService = Depends(Provide[Container.extraction_service])
 ):
-    try:
-        content = await file.read()
-        result = await service.process_file(content, file.filename)
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    content = await file.read()
+    result = await service.process_file(content, file.filename)
+    return result
 
 @router.get("/", response_model=List[ExtractionTask])
 @inject

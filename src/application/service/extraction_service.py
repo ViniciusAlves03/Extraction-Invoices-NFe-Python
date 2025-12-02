@@ -5,7 +5,7 @@ from src.application.port.excel_extractor_interface import IExcelExtractor
 from src.application.port.logger_interface import ILogger
 from src.application.domain.model.extraction_task import ExtractionTask
 from src.application.domain.model.task_filter import TaskFilter
-from src.application.domain.exception import (ValidationException, NotFoundException)
+from src.application.domain.exception import (ValidationException, NotFoundException, ConflictException)
 from src.application.domain.utils.status_types import Status
 from src.utils.hashing import calculate_sha256
 from src.utils.strings import Strings
@@ -31,7 +31,10 @@ class ExtractionService(IExtractionService):
         existing_task = await self.repository.find_by_hash(file_hash)
 
         if existing_task:
-            return existing_task
+            raise ConflictException(
+                message=Strings.ERROR_MESSAGE['TASK']['TASK_REGISTERED'],
+                description=Strings.ERROR_MESSAGE['TASK']['TASK_REGISTERED_DESCRIPTION'].format(existing_task.status)
+            )
 
         extracted_data = []
         errors = []

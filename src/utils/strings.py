@@ -35,6 +35,8 @@ class Strings:
         },
 
         "TASK": {
+            "TASK_REGISTERED": "NFe already registered!",
+            "TASK_REGISTERED_DESCRIPTION": "NFe is already registered with a {0} status.",
             "NOT_FOUND": "Record not found!",
             "NOT_FOUND_DESC": "Record with ID {0} not found."
         }

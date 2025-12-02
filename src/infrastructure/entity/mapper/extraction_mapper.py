@@ -1,6 +1,7 @@
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense, ExtractionError
 from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema, ExtractedExpenseSchema, ExtractionErrorSchema
 
+
 class ExtractionMapper:
 
     @staticmethod
@@ -8,8 +9,9 @@ class ExtractionMapper:
         return ExtractionTask(
             id=str(schema.id),
             filename=schema.filename,
-            status=schema.status,
             file_type=schema.file_type,
+            file_hash=schema.file_hash,
+            status=schema.status,
             created_at=schema.created_at,
             updated_at=schema.updated_at,
             result_data=[

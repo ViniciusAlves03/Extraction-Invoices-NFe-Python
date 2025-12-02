@@ -15,8 +15,8 @@ class ExtractionRepository(IExtractionRepository):
         await schema.create()
         return ExtractionMapper.to_domain(schema)
 
-    async def find_all(self, filters: TaskFilter) -> list[ExtractionTask]:
-        query = {}
+    async def find_all(self, user_id: str, filters: TaskFilter) -> list[ExtractionTask]:
+        query = {"user_id": user_id}
 
         if filters.status:
             query["status"] = filters.status
@@ -47,20 +47,22 @@ class ExtractionRepository(IExtractionRepository):
             return ExtractionMapper.to_domain(schema)
         return None
 
-    async def find_by_hash(self, file_hash: str) -> ExtractionTask | None:
+    async def find_by_hash(self, user_id: str, file_hash: str) -> ExtractionTask | None:
         schema = await ExtractionTaskSchema.find_one(
             ExtractionTaskSchema.file_hash == file_hash,
+            ExtractionTaskSchema.user_id == user_id,
             In(ExtractionTaskSchema.status, ["COMPLETED", "PENDING", "PARTIAL_SUCCESS"])
         ).project(ExtractionTaskSchema)
         if schema:
             return ExtractionMapper.to_domain(schema)
         return None
 
-    async def find_duplicate_by_key(self, access_key: str, amount: Decimal) -> tuple[str, ExtractedExpense] | None:
+    async def find_duplicate_by_key(self, user_id: str, access_key: str, amount: Decimal) -> tuple[str, ExtractedExpense] | None:
         if not access_key: return None
 
         task_schema = await ExtractionTaskSchema.find_one(
             {
+                "user_id": user_id,
                 "result_data": {
                     "$elemMatch": {
                         "access_key": access_key,

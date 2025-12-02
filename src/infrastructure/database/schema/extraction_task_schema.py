@@ -34,6 +34,7 @@ class ExtractionTaskSchema(Document):
     file_type: str
     file_hash: str
     status: str
+    user_id: str
     created_at: datetime
     updated_at: datetime
     result_data: List[ExtractedExpenseSchema] = []

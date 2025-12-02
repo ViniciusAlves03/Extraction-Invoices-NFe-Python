@@ -12,6 +12,7 @@ class ExtractionMapper:
             file_type=schema.file_type,
             file_hash=schema.file_hash,
             status=schema.status,
+            user_id=schema.user_id,
             created_at=schema.created_at,
             updated_at=schema.updated_at,
             result_data=[
@@ -43,6 +44,7 @@ class ExtractionMapper:
             file_type=domain.file_type,
             file_hash=domain.file_hash,
             status=domain.status,
+            user_id=domain.user_id,
             created_at=domain.created_at,
             updated_at=domain.updated_at,
             result_data=[

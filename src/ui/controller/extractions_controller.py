@@ -6,30 +6,33 @@ from src.application.port.extraction_service_interface import IExtractionService
 from src.di.di import Container
 from dependency_injector.wiring import inject, Provide
 
-router = APIRouter(prefix="/v1/extractions")
+router = APIRouter(prefix="/v1/users/{user_id}/extractions")
 
 @router.post("/")
 @inject
 async def upload_file(
+    user_id: str,
     file: UploadFile = File(...),
     service: IExtractionService = Depends(Provide[Container.extraction_service])
 ):
     content = await file.read()
-    result = await service.process_file(content, file.filename)
+    result = await service.process_file(user_id, content, file.filename)
     return result
 
 @router.get("/", response_model=List[ExtractionTask])
 @inject
 async def get_extractions(
+    user_id: str,
     filters: TaskFilter = Depends(),
     service: IExtractionService = Depends(Provide[Container.extraction_service])
 ):
-    return await service.get_all_tasks(filters)
+    return await service.get_all_tasks(user_id, filters)
 
 @router.get("/{task_id}", response_model=ExtractionTask)
 @inject
 async def get_extraction_by_id(
+    user_id: str,
     task_id: str,
     service: IExtractionService = Depends(Provide[Container.extraction_service])
 ):
-    return await service.get_task_by_id(task_id)
+    return await service.get_task_by_id(user_id, task_id)

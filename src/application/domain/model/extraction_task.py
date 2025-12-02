@@ -51,6 +51,7 @@ class ExtractionTask(BaseModel):
     file_type: str
     file_hash: Optional[str] = None
     status: Status = Status.PENDING
+    user_id: str
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     result_data: List[ExtractedExpense] = []

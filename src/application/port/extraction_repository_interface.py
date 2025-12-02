@@ -12,7 +12,7 @@ class IExtractionRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_all(self, filters: TaskFilter) -> List[ExtractionTask]:
+    async def find_all(self, user_id: str, filters: TaskFilter) -> List[ExtractionTask]:
         pass
 
     @abstractmethod
@@ -20,9 +20,9 @@ class IExtractionRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by_hash(self, file_hash: str) -> ExtractionTask | None:
+    async def find_by_hash(self, user_id: str, file_hash: str) -> ExtractionTask | None:
         pass
 
     @abstractmethod
-    async def find_duplicate_by_key(self, access_key: str, amount: Decimal) -> tuple[str, ExtractedExpense] | None:
+    async def find_duplicate_by_key(self, user_id: str, access_key: str, amount: Decimal) -> tuple[str, ExtractedExpense] | None:
         pass

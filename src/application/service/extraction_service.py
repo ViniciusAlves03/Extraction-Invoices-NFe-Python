@@ -19,7 +19,7 @@ class ExtractionService(IExtractionService):
         self.excel_extractor = excel_extractor
         self.logger = logger
 
-    async def process_file(self, file_content: bytes, filename: str) -> ExtractionTask:
+    async def process_file(self, user_id: str, file_content: bytes, filename: str) -> ExtractionTask:
         extension = filename.split('.')[-1].lower()
         supported_extensions = ['xlsx', 'xls', 'png', 'jpg', 'jpeg']
 
@@ -28,7 +28,7 @@ class ExtractionService(IExtractionService):
             raise ValidationException(message=msg)
 
         file_hash = calculate_sha256(file_content)
-        existing_task = await self.repository.find_by_hash(file_hash)
+        existing_task = await self.repository.find_by_hash(user_id, file_hash)
 
         if existing_task:
             raise ConflictException(
@@ -54,7 +54,7 @@ class ExtractionService(IExtractionService):
                         if cache_key in checked_keys_cache:
                             result = checked_keys_cache[cache_key]
                         else:
-                            result = await self.repository.find_duplicate_by_key(item.access_key, item.total_amount)
+                            result = await self.repository.find_duplicate_by_key(user_id, item.access_key, item.total_amount)
                             checked_keys_cache[cache_key] = result
 
                         if result:
@@ -75,6 +75,7 @@ class ExtractionService(IExtractionService):
                 file_hash=file_hash,
                 file_type=extension,
                 status=status,
+                user_id=user_id,
                 result_data=extracted_data,
                 error_report=errors
             )
@@ -88,16 +89,17 @@ class ExtractionService(IExtractionService):
                 file_hash=file_hash,
                 file_type=extension,
                 status=Status.FAILED,
+                user_id=user_id,
                 error_report=[{"item_identifier": "System", "error_message": str(e)}]
             )
             return await self.repository.create(error_task)
 
-    async def get_all_tasks(self, filters: TaskFilter) -> list[ExtractionTask]:
-        return await self.repository.find_all(filters)
+    async def get_all_tasks(self, user_id: str, filters: TaskFilter) -> list[ExtractionTask]:
+        return await self.repository.find_all(user_id, filters)
 
-    async def get_task_by_id(self, task_id: str) -> ExtractionTask:
+    async def get_task_by_id(self, user_id: str, task_id: str) -> ExtractionTask:
         task = await self.repository.find_by_id(task_id)
-        if not task:
+        if not task or task.user_id != user_id:
             raise NotFoundException(
                 message=Strings.ERROR_MESSAGE['TASK']['NOT_FOUND'],
                 description=Strings.ERROR_MESSAGE['TASK']['NOT_FOUND_DESC']

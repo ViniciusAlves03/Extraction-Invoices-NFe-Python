@@ -6,7 +6,7 @@ from src.application.domain.exception import (
     RepositoryException,
     NotFoundException
 )
-from src.utils.strings import Strings
+from src.utils import Strings
 from .api_error import APIError
 
 

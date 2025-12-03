@@ -1,12 +1,11 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from src.ui.controller import extractions_controller
-from src.di.di import Container
-from src.infrastructure.database.mongo_connection import MongoConnection
-from utils.settings import Settings
+from src.di import Container
+from src.infrastructure.database import MongoConnection
+from src.utils import (Settings, Strings)
 from src.application.domain.exception import DomainException
-from src.utils.strings import Strings
-from src.ui.exception.exception_handler import global_exception_handler
+from src.ui.exception import global_exception_handler
 
 
 def create_app(settings: Settings) -> FastAPI:

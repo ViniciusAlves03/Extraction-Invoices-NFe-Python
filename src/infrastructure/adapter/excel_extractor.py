@@ -1,9 +1,9 @@
 import io
 import pandas as pd
 from pydantic import ValidationError
-from src.application.port.excel_extractor_interface import IExcelExtractor
-from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
-from src.utils.strings import Strings
+from src.application.port import IExcelExtractor
+from src.application.domain.model import (ExtractedExpense, ExtractionError)
+from src.utils import Strings
 
 
 class ExcelExtractor(IExcelExtractor):

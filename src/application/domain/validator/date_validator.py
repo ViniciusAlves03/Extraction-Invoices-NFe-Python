@@ -1,5 +1,5 @@
 from datetime import datetime
-from src.utils.strings import Strings
+from src.utils import Strings
 
 
 class DateValidator:

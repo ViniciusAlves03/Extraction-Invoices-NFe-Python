@@ -1,5 +1,5 @@
-from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense, ExtractionError
-from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema, ExtractedExpenseSchema, ExtractionErrorSchema
+from src.application.domain.model import (ExtractionTask, ExtractedExpense, ExtractionError)
+from src.infrastructure.database.schema import (ExtractionTaskSchema, ExtractedExpenseSchema, ExtractionErrorSchema)
 
 
 class ExtractionMapper:

@@ -1,9 +1,7 @@
 from dependency_injector import containers, providers
-from src.application.service.extraction_service import ExtractionService
-from src.application.service.extraction_service import ExtractionService
-from src.infrastructure.repository.extraction_repository import ExtractionRepository
-from src.infrastructure.adapter.gemini_extractor import GeminiExtractor
-from src.infrastructure.adapter.excel_extractor import ExcelExtractor
+from src.application.service import ExtractionService
+from src.infrastructure.repository import ExtractionRepository
+from src.infrastructure.adapter import (ExcelExtractor, GeminiExtractor)
 from src.utils.custom_logger import CustomLogger
 
 

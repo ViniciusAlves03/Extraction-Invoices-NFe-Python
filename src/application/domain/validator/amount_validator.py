@@ -1,6 +1,6 @@
 import re
 from decimal import Decimal, InvalidOperation
-from src.utils.strings import Strings
+from src.utils import Strings
 
 
 class AmountValidator:

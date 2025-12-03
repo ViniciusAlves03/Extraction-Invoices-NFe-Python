@@ -4,10 +4,9 @@ from decimal import Decimal
 from PIL import Image
 import google.generativeai as genai
 from pydantic import ValidationError
-from src.application.port.image_extractor_interface import IImageExtractor
-from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
-from utils.settings import settings
-from src.utils.strings import Strings
+from src.application.port import IImageExtractor
+from src.application.domain.model import (ExtractedExpense, ExtractionError)
+from src.utils import (Strings, settings)
 
 
 class GeminiExtractor(IImageExtractor):

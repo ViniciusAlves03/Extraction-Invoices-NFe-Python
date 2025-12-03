@@ -1,11 +1,10 @@
 from decimal import Decimal
 from beanie import PydanticObjectId
-from beanie.operators import RegEx, In
-from src.application.port.extraction_repository_interface import IExtractionRepository
-from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
-from src.application.domain.model.task_filter import TaskFilter
-from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema
-from src.infrastructure.entity.mapper.extraction_mapper import ExtractionMapper
+from beanie.operators import In
+from src.application.port import IExtractionRepository
+from src.application.domain.model import (ExtractionTask, ExtractedExpense, TaskFilter)
+from src.infrastructure.database.schema import ExtractionTaskSchema
+from src.infrastructure.entity.mapper import ExtractionMapper
 
 
 class ExtractionRepository(IExtractionRepository):

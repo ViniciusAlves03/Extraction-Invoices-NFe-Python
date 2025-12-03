@@ -1,7 +1,7 @@
 import logging
 import sys
-from src.application.port.logger_interface import ILogger
-from utils.settings import settings
+from src.application.port import ILogger
+from src.utils import settings
 
 
 class CustomLogger(ILogger):

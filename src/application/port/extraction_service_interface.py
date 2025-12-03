@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from src.application.domain.model.extraction_task import ExtractionTask
+from src.application.domain.model import ExtractionTask
 from src.application.domain.model.task_filter import TaskFilter
 
 

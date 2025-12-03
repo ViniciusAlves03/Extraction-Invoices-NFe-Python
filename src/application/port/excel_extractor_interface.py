@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
+from src.application.domain.model import ExtractedExpense, ExtractionError
 
 
 class IExcelExtractor(ABC):

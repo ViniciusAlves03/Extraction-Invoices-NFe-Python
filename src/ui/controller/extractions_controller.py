@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends
 from typing import List
-from src.application.domain.model.extraction_task import ExtractionTask
+from src.application.domain.model import ExtractionTask
 from src.application.domain.model.task_filter import TaskFilter
 from src.application.port.extraction_service_interface import IExtractionService
 from src.di.di import Container

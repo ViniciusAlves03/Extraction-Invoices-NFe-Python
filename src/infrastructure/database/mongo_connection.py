@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
-from src.infrastructure.database.schema.extraction_task_schema import ExtractionTaskSchema
+from src.infrastructure.database.schema import ExtractionTaskSchema
 
 
 class MongoConnection:

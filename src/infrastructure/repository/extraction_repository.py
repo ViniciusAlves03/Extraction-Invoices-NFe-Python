@@ -15,22 +15,22 @@ class ExtractionRepository(IExtractionRepository):
         return ExtractionMapper.to_domain(schema)
 
     async def find_all(self, user_id: str, filters: TaskFilter) -> list[ExtractionTask]:
-        query = {"user_id": user_id}
+        query = {"userId": user_id}
 
         if filters.status:
             query["status"] = filters.status
 
         if filters.title:
-            query["result_data.title"] = {"$regex": filters.title, "$options": "i"}
+            query["resultData.title"] = {"$regex": filters.title, "$options": "i"}
 
         if filters.date:
-            query["result_data.date"] = filters.date
+            query["resultData.date"] = filters.date
 
         if filters.category_id:
-            query["result_data.categoryId"] = filters.category_id
+            query["resultData.category_id"] = filters.category_id
 
         if filters.is_duplicate is not None:
-            query["result_data.is_duplicate"] = filters.is_duplicate
+            query["resultData.isDuplicate"] = filters.is_duplicate
 
         schemas = await ExtractionTaskSchema.find(query).to_list()
         return [ExtractionMapper.to_domain(s) for s in schemas]
@@ -61,11 +61,11 @@ class ExtractionRepository(IExtractionRepository):
 
         task_schema = await ExtractionTaskSchema.find_one(
             {
-                "user_id": user_id,
-                "result_data": {
+                "userId": user_id,
+                "resultData": {
                     "$elemMatch": {
-                        "access_key": access_key,
-                        "total_amount": amount
+                        "accessKey": access_key,
+                        "totalAmount": amount
                     }
                 },
                 "status": "COMPLETED"
@@ -89,7 +89,7 @@ class ExtractionRepository(IExtractionRepository):
                 unit_price=found_item_schema.unit_price,
                 total_amount=found_item_schema.total_amount,
                 date=found_item_schema.date,
-                categoryId=found_item_schema.categoryId,
+                category_id=found_item_schema.category_id,
                 access_key=found_item_schema.access_key
             )
             return str(task_schema.id), domain_item

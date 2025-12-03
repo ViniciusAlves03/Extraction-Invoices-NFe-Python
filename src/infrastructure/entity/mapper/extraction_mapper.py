@@ -23,7 +23,7 @@ class ExtractionMapper:
                     unit_price=item.unit_price,
                     total_amount=item.total_amount,
                     date=item.date,
-                    categoryId=item.categoryId,
+                    category_id=item.category_id,
                     access_key=item.access_key,
                     is_duplicate=item.is_duplicate,
                     duplicate_of_id=item.duplicate_of_id
@@ -40,6 +40,7 @@ class ExtractionMapper:
     @staticmethod
     def to_schema(domain: ExtractionTask) -> ExtractionTaskSchema:
         return ExtractionTaskSchema(
+            id=domain.id,
             filename=domain.filename,
             file_type=domain.file_type,
             file_hash=domain.file_hash,
@@ -55,7 +56,7 @@ class ExtractionMapper:
                     unit_price=item.unit_price,
                     total_amount=item.total_amount,
                     date=item.date,
-                    categoryId=item.categoryId,
+                    category_id=item.category_id,
                     access_key=item.access_key,
                     is_duplicate=item.is_duplicate,
                     duplicate_of_id=item.duplicate_of_id

@@ -42,7 +42,7 @@ class ExtractedExpense(BaseModel):
         description="The date of the transaction in YYYY-MM-DD format.",
         examples=["2023-10-25"]
     )
-    categoryId: Optional[str] = Field(
+    category_id: Optional[str] = Field(
         None,
         description="The ID of the category associated with this expense (optional).",
         examples=["cat_12345"]

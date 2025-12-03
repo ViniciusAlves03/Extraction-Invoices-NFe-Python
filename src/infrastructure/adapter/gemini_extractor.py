@@ -6,7 +6,7 @@ import google.generativeai as genai
 from pydantic import ValidationError
 from src.application.port.image_extractor_interface import IImageExtractor
 from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
-from src.utils.config import settings
+from utils.settings import settings
 from src.utils.strings import Strings
 
 
@@ -14,7 +14,7 @@ class GeminiExtractor(IImageExtractor):
 
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        self.model = genai.GenerativeModel(settings.GENERATIVE_MODEL)
 
     def extract_products_from_invoice(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
         try:

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from src.ui.controller import extractions_controller
 from src.di.di import Container
 from src.infrastructure.database.mongo_connection import MongoConnection
-from src.utils.config import Settings
+from utils.settings import Settings
 from src.application.domain.exception import DomainException
 from src.utils.strings import Strings
 from src.ui.exception.exception_handler import global_exception_handler

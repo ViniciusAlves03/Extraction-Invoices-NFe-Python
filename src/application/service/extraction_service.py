@@ -43,7 +43,7 @@ class ExtractionService(IExtractionService):
             if extension in ['xlsx', 'xls']:
                 extracted_data, errors = self.excel_extractor.extract_products_from_excel(file_content)
             elif extension in ['png', 'jpg', 'jpeg']:
-                extracted_data, errors = self.image_extractor.extract_products_from_nfe(file_content)
+                extracted_data, errors = self.image_extractor.extract_products_from_invoice(file_content)
 
             if extracted_data:
                 checked_keys_cache = {}

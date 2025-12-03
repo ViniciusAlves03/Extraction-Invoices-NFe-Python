@@ -3,6 +3,7 @@ import sys
 from src.application.port.logger_interface import ILogger
 from src.utils.config import settings
 
+
 class CustomLogger(ILogger):
     def __init__(self):
         self.logger = logging.getLogger(settings.APP_ID)

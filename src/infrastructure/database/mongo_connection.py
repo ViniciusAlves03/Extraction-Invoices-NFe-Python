@@ -14,10 +14,10 @@ class MongoConnection:
             database=cls._client.get_default_database(),
             document_models=[ExtractionTaskSchema]
         )
-        print(f"✅ Conectado ao MongoDB: {uri}")
+        print(f"✅ Connected to MongoDB: {uri}")
 
     @classmethod
     async def disconnect(cls):
         if cls._client:
             cls._client.close()
-            print("🛑 Conexão com MongoDB fechada.")
+            print("🛑 Connection to MongoDB closed.")

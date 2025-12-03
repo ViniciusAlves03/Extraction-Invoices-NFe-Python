@@ -8,9 +8,6 @@ from src.utils.custom_logger import CustomLogger
 
 
 class Container(containers.DeclarativeContainer):
-
-    wiring_config = containers.WiringConfiguration(modules=["src.ui.controller.extractions_controller"])
-
     logger = providers.Singleton(CustomLogger)
 
     extraction_repository = providers.Factory(ExtractionRepository)

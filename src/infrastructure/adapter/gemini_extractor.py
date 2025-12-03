@@ -1,17 +1,14 @@
 import json
 import io
-import logging
 from decimal import Decimal
 from PIL import Image
 import google.generativeai as genai
 from pydantic import ValidationError
-
 from src.application.port.image_extractor_interface import IImageExtractor
 from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
 from src.utils.config import settings
 from src.utils.strings import Strings
 
-logger = logging.getLogger(__name__)
 
 class GeminiExtractor(IImageExtractor):
 
@@ -19,7 +16,7 @@ class GeminiExtractor(IImageExtractor):
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash')
 
-    def extract_products_from_nfe(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
+    def extract_products_from_invoice(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
         try:
             image = Image.open(io.BytesIO(file_content))
 

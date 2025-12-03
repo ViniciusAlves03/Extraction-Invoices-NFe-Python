@@ -1,5 +1,6 @@
 from typing import Optional, Any
 
+
 class APIError:
     def __init__(self, code: int, message: str, description: Optional[str] = None):
         self.code = code

@@ -5,5 +5,5 @@ from src.application.domain.model.extraction_task import ExtractedExpense, Extra
 class IImageExtractor(ABC):
 
     @abstractmethod
-    def extract_products_from_nfe(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
+    def extract_products_from_invoice(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
         pass

@@ -9,6 +9,7 @@ from src.application.domain.exception import (
 from src.utils.strings import Strings
 from .api_error import APIError
 
+
 class APIExceptionManager:
     @staticmethod
     def build(exc: Exception) -> APIError:

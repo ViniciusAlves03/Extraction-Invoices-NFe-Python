@@ -2,6 +2,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from .api_exception_manager import APIExceptionManager
 
+
 async def global_exception_handler(request: Request, exc: Exception):
     api_error = APIExceptionManager.build(exc)
 

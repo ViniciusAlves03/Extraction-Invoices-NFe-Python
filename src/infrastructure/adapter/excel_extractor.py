@@ -1,13 +1,10 @@
 import io
 import pandas as pd
-import logging
 from pydantic import ValidationError
-
 from src.application.port.excel_extractor_interface import IExcelExtractor
 from src.application.domain.model.extraction_task import ExtractedExpense, ExtractionError
 from src.utils.strings import Strings
 
-logger = logging.getLogger(__name__)
 
 class ExcelExtractor(IExcelExtractor):
 
@@ -52,7 +49,6 @@ class ExcelExtractor(IExcelExtractor):
                         item_identifier=f"Excel Row {row_idx}",
                         error_message=msg
                     ))
-                    logger.warning(f"Excel Row Error {row_idx}: {msg}")
                 except Exception as e:
                     errors.append(ExtractionError(
                         item_identifier=f"Excel Row {row_idx}",
@@ -62,7 +58,6 @@ class ExcelExtractor(IExcelExtractor):
             return extracted_data, errors
 
         except Exception as e:
-            logger.error(f"Excel fatal error: {e}")
             return [], [ExtractionError(
                 item_identifier="General Archive",
                 error_message=Strings.ERROR_MESSAGE['EXTRACTOR']['EXCEL_ERROR'].format(str(e))

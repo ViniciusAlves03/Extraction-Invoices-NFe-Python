@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal
-from typing import List, Optional
+from typing import List
 from src.application.domain.model.extraction_task import ExtractionTask, ExtractedExpense
 from src.application.domain.model.task_filter import TaskFilter
 

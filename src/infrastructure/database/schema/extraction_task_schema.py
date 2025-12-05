@@ -1,7 +1,7 @@
 from typing import List, Optional, Annotated
 from datetime import datetime
-from beanie import Document
-from pydantic import BaseModel, BeforeValidator, ConfigDict
+from beanie import Document, PydanticObjectId
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from decimal import Decimal
 from bson import Decimal128
@@ -41,6 +41,7 @@ class ExtractedExpenseSchema(BaseModel):
     )
 
 class ExtractionTaskSchema(Document):
+    id: Optional[PydanticObjectId] = Field(None, alias="_id")
     filename: str
     file_type: str
     file_hash: str

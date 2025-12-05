@@ -40,7 +40,6 @@ class ExtractionMapper:
     @staticmethod
     def to_schema(domain: ExtractionTask) -> ExtractionTaskSchema:
         return ExtractionTaskSchema(
-            id=domain.id,
             filename=domain.filename,
             file_type=domain.file_type,
             file_hash=domain.file_hash,

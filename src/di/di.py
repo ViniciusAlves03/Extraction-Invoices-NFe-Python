@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 from src.application.service import ExtractionService
+from src.application.factory import ExtractorFactory
 from src.infrastructure.repository import ExtractionRepository
 from src.infrastructure.adapter import (ExcelExtractor, GeminiExtractor)
 from src.utils.custom_logger import CustomLogger
@@ -10,13 +11,20 @@ class Container(containers.DeclarativeContainer):
 
     extraction_repository = providers.Factory(ExtractionRepository)
 
-    image_extractor = providers.Singleton(GeminiExtractor)
     excel_extractor = providers.Singleton(ExcelExtractor)
+    gemini_extractor = providers.Singleton(GeminiExtractor)
+
+    extractor_factory = providers.Factory(
+        ExtractorFactory,
+        extractors=providers.List(
+            excel_extractor,
+            gemini_extractor
+        )
+    )
 
     extraction_service = providers.Factory(
         ExtractionService,
         repository=extraction_repository,
-        image_extractor=image_extractor,
-        excel_extractor=excel_extractor,
+        extractor_factory=extractor_factory,
         logger=logger
     )

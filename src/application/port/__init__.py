@@ -1,5 +1,4 @@
-from .excel_extractor_interface import IExcelExtractor
 from .extraction_repository_interface import IExtractionRepository
+from .extractor_interface import IExtractor
 from .extraction_service_interface import IExtractionService
-from .image_extractor_interface import IImageExtractor
 from .logger_interface import ILogger

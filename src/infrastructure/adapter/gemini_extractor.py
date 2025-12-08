@@ -4,18 +4,21 @@ from decimal import Decimal
 from PIL import Image
 import google.generativeai as genai
 from pydantic import ValidationError
-from src.application.port import IImageExtractor
+from src.application.port import IExtractor
 from src.application.domain.model import (ExtractedExpense, ExtractionError)
 from src.utils import (Strings, settings)
 
 
-class GeminiExtractor(IImageExtractor):
+class GeminiExtractor(IExtractor):
 
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
         self.model = genai.GenerativeModel(settings.GENERATIVE_MODEL)
 
-    def extract_products_from_invoice(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
+    def supports(self, filename: str) -> bool:
+        return filename.lower().endswith(('.png', '.jpg', '.jpeg'))
+
+    def extract(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
         try:
             image = Image.open(io.BytesIO(file_content))
 

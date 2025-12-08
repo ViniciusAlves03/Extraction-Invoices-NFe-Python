@@ -1,14 +1,17 @@
 import io
 import pandas as pd
 from pydantic import ValidationError
-from src.application.port import IExcelExtractor
+from src.application.port import IExtractor
 from src.application.domain.model import (ExtractedExpense, ExtractionError)
 from src.utils import Strings
 
 
-class ExcelExtractor(IExcelExtractor):
+class ExcelExtractor(IExtractor):
 
-    def extract_products_from_excel(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
+    def supports(self, filename: str) -> bool:
+        return filename.lower().endswith(('.xlsx', '.xls'))
+
+    def extract(self, file_content: bytes) -> tuple[list[ExtractedExpense], list[ExtractionError]]:
         extracted_data = []
         errors = []
 

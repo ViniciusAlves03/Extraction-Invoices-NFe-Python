@@ -1,30 +1,22 @@
-from src.application.port import (
-    IExtractionRepository, IExtractionService,
-    IExcelExtractor, IImageExtractor,
-    ILogger
-)
+from src.application.port import (IExtractionRepository, IExtractionService, ILogger)
 from src.application.port import ILogger
 from src.application.domain.model import (ExtractionTask, TaskFilter)
-from src.application.domain.exception import (ValidationException, NotFoundException, ConflictException)
+from src.application.domain.exception import (NotFoundException, ConflictException)
 from src.application.domain.utils import Status
+from src.application.factory import ExtractorFactory
 from src.utils import (Strings, calculate_sha256)
 
 
 class ExtractionService(IExtractionService):
 
-    def __init__(self, repository: IExtractionRepository, image_extractor: IImageExtractor, excel_extractor: IExcelExtractor, logger: ILogger):
+    def __init__(self, repository: IExtractionRepository, extractor_factory: ExtractorFactory, logger: ILogger):
         self.repository = repository
-        self.image_extractor = image_extractor
-        self.excel_extractor = excel_extractor
+        self.extractor_factory = extractor_factory
         self.logger = logger
 
     async def process_file(self, user_id: str, file_content: bytes, filename: str) -> ExtractionTask:
-        extension = filename.split('.')[-1].lower()
-        supported_extensions = ['xlsx', 'xls', 'png', 'jpg', 'jpeg']
-
-        if extension not in supported_extensions:
-            msg = Strings.ERROR_MESSAGE['FILE']['NOT_SUPPORTED'].format(extension)
-            raise ValidationException(message=msg)
+        extension = filename.split('.')[-1].lower() if '.' in filename else 'unknown'
+        extractor = self.extractor_factory.get_extractor(filename)
 
         file_hash = calculate_sha256(file_content)
         existing_task = await self.repository.find_by_hash(user_id, file_hash)
@@ -39,10 +31,7 @@ class ExtractionService(IExtractionService):
         errors = []
 
         try:
-            if extension in ['xlsx', 'xls']:
-                extracted_data, errors = self.excel_extractor.extract_products_from_excel(file_content)
-            elif extension in ['png', 'jpg', 'jpeg']:
-                extracted_data, errors = self.image_extractor.extract_products_from_invoice(file_content)
+            extracted_data, errors = extractor.extract(file_content)
 
             if extracted_data:
                 checked_keys_cache = {}
